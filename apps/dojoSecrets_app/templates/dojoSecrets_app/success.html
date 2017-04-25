@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+    <body>
+        <h1>Welcome, {{welcome}}</h1>
+        <a href="/logout">Logout</a><br>
+        <a href="/top_secrets">Most popular secrets</a>
+        {% for message in messages %}
+            {% if "register" in message.tags %}
+                <h4>{{message}}</h4>
+            {% endif %}
+        {% endfor %}
+        <form action="/add_secret" method="post">
+            {% csrf_token %}
+            <h3>Your Secret Here:</h3>
+            <input type="text" name="content" placeholder="secret here...">
+            <input type="submit" value="POST">
+        </form><br>
+
+        {% for secret in secrets %}
+            <fieldset>
+            <h4>{{secret.content}} {{secret.id}}</h4>
+            <p>{{secret.created_at}}</p>
+            <p>{{secret.secret_likes.count}} likes</p>
+            {% if secret.user.id == request.session.id %}
+            <p>You created this secret</p>
+                <form action="/success/{{secret.id}}/destroy" method="post">
+                    {% csrf_token %}
+                    <input type="submit" value="delete">
+                </form>
+            {% elif not secret.liked %}
+                <a href="/success/{{secret.id}}/likes">Like</a>
+            {% else %}
+                <p>You liked this secret</p>
+            {% endif %}
+            </fieldset>
+        {% endfor %}
+    </body>
+</html>
+
+
+
+
+
+
+
+
+
+<!-- end -->
